@@ -60,7 +60,7 @@ module.exports = class Instance extends EventEmitter {
         self.on('status:updated', (newstatus) => {
             // Alive
             if (newstatus === InstanceModel.STARTED) {
-                const delay = getRandomDelay(self._config.autorestart.minDelay, self._config.autorestart.maxDelay);
+                const delay = self._config.autorestart.maxDelay;
                 winston.debug('[Instance/%s] autorestart in %d secs', self._model.name, delay);
                 self._checkRestartTimeout = setTimeout(autorestart, delay);
             }
@@ -137,10 +137,7 @@ module.exports = class Instance extends EventEmitter {
                         });
                 }
                 else {
-                    const delay = Math.floor(
-                        self._config.autorestart.minDelay +
-                        Math.random() * (self._config.autorestart.maxDelay - self._config.autorestart.minDelay)
-                    );
+                    const delay = self._config.autorestart.minDelay;
 
                     winston.debug('[Instance/%s] autorestart cancelled (only 1 instance). restarting in %d secs...', self._model.name, delay);
 
