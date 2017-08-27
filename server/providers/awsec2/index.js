@@ -186,9 +186,18 @@ module.exports = class ProviderAWSEC2 {
                     .map('Instances')
                     .flatten()
                     .filter(
-                    (instance) =>
-                    instance.State.Name !== ProviderAWSEC2.ST_SHUTTING_DOWN &&
-                    instance.State.Name !== ProviderAWSEC2.ST_TERMINATED
+                      (instance) =>{
+                          let tagValid=false;
+                          if(instance.Tags){
+                              instance.Tags.forEach((tag)=>{
+                                  if(tag.Key === 'Name' && tag.Value.indexOf(this._config.tag) === 0){
+                                      tagValid=true;
+                                  }
+                              });
+                          };
+                          return instance.State.Name !== ProviderAWSEC2.ST_SHUTTING_DOWN &&
+                              instance.State.Name !== ProviderAWSEC2.ST_TERMINATED && tagValid;
+                      }
                 )
                     .size();
 
