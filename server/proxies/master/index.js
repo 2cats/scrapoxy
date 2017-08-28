@@ -145,7 +145,7 @@ module.exports = class Master {
                     cookieMap[instanceID]=new CookieJar(null, {looseMode: true});
                   }
                   respCookies.forEach((cookieItem)=>{
-                    cookieMap[instanceID].setCookieSync(respCookies,req.url);
+                    cookieMap[instanceID].setCookieSync(cookieItem,req.url);
                   })
                 }
 
