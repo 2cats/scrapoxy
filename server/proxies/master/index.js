@@ -86,10 +86,12 @@ module.exports = class Master {
             // Update headers
             instance.updateRequestHeaders(req.headers);
 
+            winston.debug("@--->"+JSON.stringify(req.headers));
+
             // Make request
             const proxyOpts = _.merge(createProxyOpts(req.url), {
                 method: req.method,
-                headers: req.headers,
+                headers: req.headers, //TODO替换headers里的cookies
                 agent: self._proxyAgent,
                 proxy: instance.proxyParameters,
             });
@@ -126,6 +128,7 @@ module.exports = class Master {
                 });
 
                 const cleanHeaders = sanitize.headers(proxy_res.headers);
+                winston.debug("@<----"+JSON.stringify(proxy_res.headers));
                 instance.updateResponseHeaders(cleanHeaders);
 
                 res.writeHead(proxy_res.statusCode, cleanHeaders);
