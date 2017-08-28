@@ -8,8 +8,11 @@ const _ = require('lodash'),
     sanitize = require('./sanitize'),
     url = require('url'),
     winston = require('winston');
+    // test();
+const tough = require('tough-cookie')
 
-
+const CookieJar = tough.CookieJar;
+const cookieMap = {};
 module.exports = class Master {
     constructor(config, manager, stats) {
         const self = this;
@@ -86,7 +89,12 @@ module.exports = class Master {
             // Update headers
             instance.updateRequestHeaders(req.headers);
 
+            const instanceID=instance.toString();
             winston.debug("@--->"+JSON.stringify(req.headers));
+            winston.debug("@"+instanceID+"---->"+JSON.stringify(req.headers));
+            if(cookieMap[instanceID]){
+              req.headers['cookie']=cookieMap[instanceID].getCookieStringSync(req.url);
+            }
 
             // Make request
             const proxyOpts = _.merge(createProxyOpts(req.url), {
@@ -128,7 +136,19 @@ module.exports = class Master {
                 });
 
                 const cleanHeaders = sanitize.headers(proxy_res.headers);
-                winston.debug("@<----"+JSON.stringify(proxy_res.headers));
+
+                let instanceID=instance.toString();
+                winston.debug("@"+instanceID+"<----"+JSON.stringify(proxy_res.headers));
+                const respCookies=proxy_res.headers['set-cookie'];
+                if(respCookies){
+                  if(!cookieMap[instanceID]){
+                    cookieMap[instanceID]=new CookieJar(null, {looseMode: true});
+                  }
+                  respCookies.forEach((cookieItem)=>{
+                    cookieMap[instanceID].setCookieSync(respCookies,req.url);
+                  })
+                }
+
                 instance.updateResponseHeaders(cleanHeaders);
 
                 res.writeHead(proxy_res.statusCode, cleanHeaders);
