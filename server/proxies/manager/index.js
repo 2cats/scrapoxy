@@ -282,7 +282,7 @@ module.exports = class Manager extends EventEmitter {
             if (idx >= self._aliveInstances.length) {
                 return;
             }
-
+            winston.debug("idx:"+idx);
             return self._aliveInstances[idx];
         }
     }

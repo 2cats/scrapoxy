@@ -90,8 +90,6 @@ module.exports = class Master {
             instance.updateRequestHeaders(req.headers);
 
             const instanceID=instance.toString();
-            winston.debug("@--->"+JSON.stringify(req.headers));
-            winston.debug("@"+instanceID+"---->"+JSON.stringify(req.headers));
             if(cookieMap[instanceID]){
               req.headers['cookie']=cookieMap[instanceID].getCookieStringSync(req.url);
             }
@@ -138,7 +136,6 @@ module.exports = class Master {
                 const cleanHeaders = sanitize.headers(proxy_res.headers);
 
                 let instanceID=instance.toString();
-                winston.debug("@"+instanceID+"<----"+JSON.stringify(proxy_res.headers));
                 const respCookies=proxy_res.headers['set-cookie'];
                 if(respCookies){
                   if(!cookieMap[instanceID]){
