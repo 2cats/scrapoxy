@@ -30,7 +30,7 @@ module.exports = {
     providers: {
         awsec2: {
             tag: 'Proxy',
-            maxRunningInstances: 10,
+            maxRunningInstances: 20,
         },
 
         ovhcloud: {
