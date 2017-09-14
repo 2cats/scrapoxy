@@ -72,6 +72,7 @@ module.exports = class Master {
             if (!instance) {
                 return writeEnd(res, 407, '[Master] Error: No running instance found');
             }
+            winston.debug("[ REQ ] uri:"+uri+",name:"+instance.name);
 
             // Log errors
             req.on('error',
@@ -217,6 +218,7 @@ module.exports = class Master {
             if (!instance) {
                 return writeEnd(socket, 407, '[Master] Error: No running instance found');
             }
+            winston.debug("[ CON ] uri:"+uri+",name:"+instance.name);
 
             // Log errors
             req.on('error',
